@@ -6,6 +6,10 @@
   <title>Chauhan.Sec — Information Security</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
+    /* Ensure fonts work even if Google Fonts fails (local file / offline) */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap');
+  </style>
+  <style>
     :root {
       --bg: #080b0f;
       --bg2: #0d1117;
@@ -23,9 +27,9 @@
       --text: #e2eaf4;
       --text2: #8a9bb0;
       --text3: #4a5f75;
-      --mono: 'Share Tech Mono', monospace;
-      --display: 'Syne', sans-serif;
-      --body: 'Inter', sans-serif;
+      --mono: 'Share Tech Mono', 'Courier New', Courier, monospace;
+      --display: 'Syne', 'Segoe UI', Arial, sans-serif;
+      --body: 'Inter', 'Segoe UI', Arial, sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -181,8 +185,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.2s forwards;
+      animation: fadeUp 0.8s 0.2s both;
     }
     .hero-tag::before {
       content: '';
@@ -196,8 +199,7 @@
       line-height: 1;
       letter-spacing: -0.02em;
       margin-bottom: 1rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.4s forwards;
+      animation: fadeUp 0.8s 0.4s both;
     }
     .hero-title .accent { color: var(--accent); }
     .hero-title .dim { color: var(--text3); }
@@ -207,16 +209,14 @@
       color: var(--text2);
       margin-bottom: 2.5rem;
       line-height: 1.8;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.6s forwards;
+      animation: fadeUp 0.8s 0.6s both;
     }
     .hero-subtitle .highlight { color: var(--accent); }
     .hero-cta {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.8s forwards;
+      animation: fadeUp 0.8s 0.8s both;
     }
     .btn-primary {
       padding: 0.85rem 2rem;
@@ -271,8 +271,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-top: 2px solid var(--accent);
-      opacity: 0;
-      animation: fadeLeft 1s 1s forwards;
+      animation: fadeLeft 1s 1s both;
     }
     .terminal-bar {
       display: flex;
@@ -303,7 +302,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     @keyframes fadeLeft {
-      from { opacity: 0; transform: translateY(-50%) translateX(30px); }
+      from { opacity: 0; transform: translateY(-50%) translateX(40px); }
       to { opacity: 1; transform: translateY(-50%) translateX(0); }
     }
 
@@ -350,12 +349,10 @@
       font-size: 0.95rem;
     }
     .about-text p strong { color: var(--text); font-weight: 500; }
-    .about-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
+    .about-stats-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
     }
     .stat-box {
       background: var(--surface);
@@ -488,8 +485,9 @@
     #skills { background: var(--bg); }
     .skills-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 3rem;
+      max-width: 700px;
     }
     .skill-category h3 {
       font-family: var(--mono);
@@ -767,26 +765,14 @@
       border: none;
       display: block;
     }
-    .map-placeholder {
-      height: 500px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      background: var(--bg2);
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      max-width: 400px;
     }
-    .map-placeholder p { font-family: var(--mono); font-size: 0.85rem; color: var(--text2); text-align: center; }
-    .map-placeholder a {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--accent);
-      text-decoration: none;
-      border: 1px solid var(--accent);
-      padding: 0.75rem 2rem;
-      transition: background 0.3s;
-    }
-    .map-placeholder a:hover { background: var(--accent-glow); }
 
     /* NEWSLETTER */
     #newsletter { background: var(--bg2); }
@@ -1022,12 +1008,19 @@
     /* SCROLL REVEAL */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
     }
     .reveal.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+    /* Fallback: if JS fails or observer doesn't fire, show content after 2s */
+    @keyframes revealFallback {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      animation: revealFallback 0s 2.5s both;
     }
 
     /* MOBILE */
@@ -1144,20 +1137,12 @@
       </div>
       <div class="about-stats reveal">
         <div class="stat-box">
-          <span class="stat-number">5+</span>
+          <span class="stat-number">3+</span>
           <span class="stat-label">Years in InfoSec</span>
         </div>
         <div class="stat-box">
           <span class="stat-number">2</span>
           <span class="stat-label">Enterprise Orgs</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">∞</span>
-          <span class="stat-label">Threats Monitored</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">0</span>
-          <span class="stat-label">Breaches on Watch</span>
         </div>
       </div>
     </div>
@@ -1171,6 +1156,16 @@
     </div>
     <div class="work-grid reveal">
       <div class="work-card">
+        <span class="work-icon">🏦</span>
+        <h3>BFSI Security Architecture</h3>
+        <p>Designing and implementing security controls aligned with RBI cybersecurity framework, PCI-DSS, and ISO 27001 for India's financial sector. Bridging compliance with real-world threat mitigation.</p>
+        <div class="work-tags">
+          <span class="tag">RBI Framework</span>
+          <span class="tag">PCI-DSS</span>
+          <span class="tag">ISO 27001</span>
+        </div>
+      </div>
+      <div class="work-card">
         <span class="work-icon">🛡️</span>
         <h3>Threat Detection & Response</h3>
         <p>End-to-end incident lifecycle management — from detection through SIEM platforms to containment, eradication, and post-incident analysis. Built and tuned detection rules for BFSI-specific attack patterns.</p>
@@ -1182,13 +1177,13 @@
         </div>
       </div>
       <div class="work-card">
-        <span class="work-icon">🏦</span>
-        <h3>BFSI Security Architecture</h3>
-        <p>Designing and implementing security controls aligned with RBI cybersecurity framework, PCI-DSS, and ISO 27001 for India's financial sector. Bridging compliance with real-world threat mitigation.</p>
+        <span class="work-icon">🤖</span>
+        <h3>AI-Powered Security Ops</h3>
+        <p>Integrating machine learning models into security operations for anomaly detection, phishing classification, and threat scoring. Exploring LLM-based threat intelligence aggregation and automated reporting.</p>
         <div class="work-tags">
-          <span class="tag">RBI Framework</span>
-          <span class="tag">PCI-DSS</span>
-          <span class="tag">ISO 27001</span>
+          <span class="tag">ML/AI</span>
+          <span class="tag">Anomaly Detection</span>
+          <span class="tag">LLMs</span>
         </div>
       </div>
       <div class="work-card">
@@ -1199,16 +1194,6 @@
           <span class="tag">VAPT</span>
           <span class="tag">Nessus</span>
           <span class="tag">Burp Suite</span>
-        </div>
-      </div>
-      <div class="work-card">
-        <span class="work-icon">🤖</span>
-        <h3>AI-Powered Security Ops</h3>
-        <p>Integrating machine learning models into security operations for anomaly detection, phishing classification, and threat scoring. Exploring LLM-based threat intelligence aggregation and automated reporting.</p>
-        <div class="work-tags">
-          <span class="tag">ML/AI</span>
-          <span class="tag">Anomaly Detection</span>
-          <span class="tag">LLMs</span>
         </div>
       </div>
       <div class="work-card">
@@ -1264,9 +1249,6 @@
           <div class="skill-header"><span class="skill-name">Security Architecture</span><span class="skill-pct">85%</span></div>
           <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
         </div>
-      </div>
-      <div class="skill-category">
-        <h3>// Technical Stack</h3>
         <div class="skill-item">
           <div class="skill-header"><span class="skill-name">SIEM (Splunk / QRadar)</span><span class="skill-pct">90%</span></div>
           <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
@@ -1324,18 +1306,18 @@
         </div>
         <div class="intel-meta">
           <span>Feb 2025 · APT · BFSI</span>
-          <a href="#contact">Read Analysis →</a>
+          <a href="https://www.cert-in.org.in/s2cMainServlet?pageid=PUBVLNOTES01&VLCODE=CIAD-2025" target="_blank" rel="noopener">Read More →</a>
         </div>
       </div>
       <div class="intel-card">
         <div class="intel-severity sev-high"><div class="sev-dot"></div>High Severity</div>
         <div class="intel-body">
           <h3>New Ransomware Variant Exploits Finance Sector VPNs</h3>
-          <p>A newly discovered ransomware family specifically targets legacy VPN appliances common in NBFC environments. Initial access via unpatched CVE-2024-XXXX with lateral movement via compromised service accounts.</p>
+          <p>A newly discovered ransomware family specifically targets legacy VPN appliances common in NBFC environments. Initial access via unpatched CVEs with lateral movement via compromised service accounts.</p>
         </div>
         <div class="intel-meta">
           <span>Jan 2025 · Ransomware · NBFC</span>
-          <a href="#contact">Read Analysis →</a>
+          <a href="https://www.cisa.gov/news-events/cybersecurity-advisories" target="_blank" rel="noopener">Read More →</a>
         </div>
       </div>
       <div class="intel-card">
@@ -1346,7 +1328,7 @@
         </div>
         <div class="intel-meta">
           <span>Jan 2025 · Phishing · AI</span>
-          <a href="#contact">Read Analysis →</a>
+          <a href="https://attack.mitre.org/techniques/T1566/" target="_blank" rel="noopener">Read More →</a>
         </div>
       </div>
     </div>
@@ -1446,13 +1428,19 @@
     </div>
     <div class="map-container reveal">
       <div class="map-header">
-        <span class="map-title">// real-time cyberattack visualization — Checkpoint Threat Map</span>
+        <span class="map-title">// Kaspersky Cyberthreat Real-Time Map — live global attack visualization</span>
         <div class="map-live"><div class="live-dot"></div>LIVE</div>
       </div>
-      <div class="map-placeholder">
-        <p>🌐 Live Threat Map</p>
-        <p style="max-width: 400px;">Click below to open the live global cyberattack map from Check Point Research — updated in real-time with attack origins, targets, and types.</p>
-        <a href="https://threatmap.checkpoint.com/" target="_blank" rel="noopener">Open Live Threat Map ↗</a>
+      <iframe
+        class="map-iframe"
+        src="https://cybermap.kaspersky.com/en/widget/dynamic/dark"
+        title="Kaspersky Live Cyber Threat Map"
+        scrolling="no"
+        allowfullscreen
+      ></iframe>
+      <div style="padding: 0.75rem 1.5rem; border-top: 1px solid var(--border); display:flex; justify-content: space-between; align-items:center;">
+        <span style="font-family: var(--mono); font-size:0.65rem; color: var(--text3);">Source: Kaspersky Cyberthreat Real-Time Map</span>
+        <a href="https://cybermap.kaspersky.com/" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);text-decoration:none;">Open Full Map ↗</a>
       </div>
     </div>
   </section>
@@ -1542,39 +1530,35 @@
             <span class="channel-icon">📧</span>
             <div>
               <div class="channel-label">Email</div>
-              <div class="channel-value">abhishek@chauhan.sec</div>
+              <div class="channel-value">Iamabhishekchauhan241101@gmail.com</div>
             </div>
           </div>
           <div class="contact-channel">
             <span class="channel-icon">💼</span>
             <div>
               <div class="channel-label">LinkedIn</div>
-              <div class="channel-value">linkedin.com/in/abhishek-chauhan-sec</div>
-            </div>
-          </div>
-          <div class="contact-channel">
-            <span class="channel-icon">🐦</span>
-            <div>
-              <div class="channel-label">Twitter / X</div>
-              <div class="channel-value">@ChauhanSec</div>
+              <div class="channel-value"><a href="https://www.linkedin.com/in/chauhanabhi" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">linkedin.com/in/chauhanabhi</a></div>
             </div>
           </div>
         </div>
       </div>
-      <form class="contact-form" onsubmit="handleContact(event)">
+      <form class="contact-form" action="https://formsubmit.co/Iamabhishekchauhan241101@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="New Message from Chauhan.Sec Website" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_template" value="table" />
         <div class="form-row">
           <div class="form-group">
             <label>Name</label>
-            <input type="text" placeholder="Your name" required />
+            <input type="text" name="name" placeholder="Your name" required />
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input type="email" placeholder="your@email.com" required />
+            <input type="email" name="email" placeholder="your@email.com" required />
           </div>
         </div>
         <div class="form-group">
           <label>Subject</label>
-          <select>
+          <select name="subject">
             <option>Security Consultation</option>
             <option>BFSI Advisory</option>
             <option>Collaboration</option>
@@ -1583,7 +1567,7 @@
         </div>
         <div class="form-group">
           <label>Message</label>
-          <textarea placeholder="Describe your query or project..."></textarea>
+          <textarea name="message" placeholder="Describe your query or project..."></textarea>
         </div>
         <button type="submit" class="btn-primary" style="width:100%">Send Message</button>
       </form>
@@ -1602,7 +1586,7 @@
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Custom Cursor
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
@@ -1634,20 +1618,46 @@
       });
     });
 
-    // Scroll Reveal
+    // Scroll Reveal - bulletproof version
     const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          // Animate skill bars
-          e.target.querySelectorAll('.skill-fill').forEach(bar => {
-            bar.style.width = bar.dataset.width + '%';
-          });
+
+    function revealElement(el) {
+      el.classList.add('visible');
+      el.querySelectorAll('.skill-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }
+
+    // Immediately reveal anything already visible in viewport
+    function checkReveal() {
+      reveals.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 60) {
+          revealElement(el);
         }
       });
-    }, { threshold: 0.1 });
-    reveals.forEach(r => observer.observe(r));
+    }
+
+    // Use IntersectionObserver as primary method
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) revealElement(e.target); });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      reveals.forEach(r => observer.observe(r));
+    }
+
+    // Scroll listener as secondary
+    window.addEventListener('scroll', checkReveal, { passive: true });
+
+    // Run immediately + after short delay to catch anything missed
+    checkReveal();
+    setTimeout(checkReveal, 300);
+    setTimeout(checkReveal, 800);
+
+    // Nuclear fallback: show everything after 1.5s no matter what
+    setTimeout(() => {
+      reveals.forEach(el => revealElement(el));
+    }, 1500);
 
     // Forms
     function handleSubscribe(e) {
@@ -1670,11 +1680,4 @@
     const navLinks = document.querySelectorAll('.nav-links a');
     window.addEventListener('scroll', () => {
       let current = '';
-      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
-      navLinks.forEach(a => {
-        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
-      });
-    });
-  </script>
-</body>
-</html>
+      sections.forEach(s 
