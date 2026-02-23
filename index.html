@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chauhan.Sec — Information Security</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b0f;
+      --bg2: #0d1117;
+      --bg3: #111820;
+      --surface: #141c26;
+      --surface2: #1a2535;
+      --border: #1e2d3d;
+      --accent: #00e5ff;
+      --accent2: #0096c7;
+      --accent-glow: rgba(0, 229, 255, 0.15);
+      --accent-glow2: rgba(0, 229, 255, 0.05);
+      --red: #ff3b3b;
+      --green: #00ff88;
+      --yellow: #ffd600;
+      --text: #e2eaf4;
+      --text2: #8a9bb0;
+      --text3: #4a5f75;
+      --mono: 'Share Tech Mono', monospace;
+      --display: 'Syne', sans-serif;
+      --body: 'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease-out, width 0.2s, height 0.2s;
+      opacity: 0.5;
+    }
+
+    /* Scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      pointer-events: none;
+      z-index: 9997;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4rem;
+      height: 70px;
+      background: rgba(8, 11, 15, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 1.2rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--text2); }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text2);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--green);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+      50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(0,255,136,0); }
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0,229,255,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,150,199,0.03) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.3;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 40px; height: 1px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-title .accent { color: var(--accent); }
+    .hero-title .dim { color: var(--text3); }
+    .hero-subtitle {
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--text2);
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+    .hero-subtitle .highlight { color: var(--accent); }
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+    .btn-primary {
+      padding: 0.85rem 2rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.3s;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: white;
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+      opacity: 0.2;
+    }
+    .btn-primary:hover { box-shadow: 0 0 30px rgba(0,229,255,0.4); }
+    .btn-primary:hover::before { transform: translateX(100%); }
+    .btn-secondary {
+      padding: 0.85rem 2rem;
+      background: transparent;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      cursor: none;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .btn-secondary:hover {
+      background: var(--accent-glow);
+      box-shadow: 0 0 20px rgba(0,229,255,0.2);
+    }
+    .hero-terminal {
+      position: absolute;
+      right: 4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      opacity: 0;
+      animation: fadeLeft 1s 1s forwards;
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+    .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .t-dot:nth-child(1) { background: #ff5f56; }
+    .t-dot:nth-child(2) { background: #ffbd2e; }
+    .t-dot:nth-child(3) { background: #27c93f; }
+    .terminal-title { font-family: var(--mono); font-size: 0.7rem; color: var(--text3); margin-left: auto; }
+    .terminal-body { padding: 1.5rem; font-family: var(--mono); font-size: 0.78rem; line-height: 2; }
+    .t-line { display: flex; gap: 0.5rem; }
+    .t-prompt { color: var(--green); }
+    .t-cmd { color: var(--text); }
+    .t-output { color: var(--text2); padding-left: 1rem; }
+    .t-accent { color: var(--accent); }
+    .t-warn { color: var(--yellow); }
+    .t-error { color: var(--red); }
+    .t-cursor { display: inline-block; width: 8px; height: 14px; background: var(--accent); animation: blink 1s infinite; vertical-align: middle; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeLeft {
+      from { opacity: 0; transform: translateY(-50%) translateX(30px); }
+      to { opacity: 1; transform: translateY(-50%) translateX(0); }
+    }
+
+    /* SECTIONS */
+    section { padding: 6rem 4rem; }
+    .section-header {
+      margin-bottom: 4rem;
+    }
+    .section-tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-tag::before {
+      content: '//';
+      color: var(--text3);
+    }
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .section-title .accent { color: var(--accent); }
+
+    /* ABOUT */
+    #about { background: var(--bg); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .about-text p {
+      color: var(--text2);
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+    .about-text p strong { color: var(--text); font-weight: 500; }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .stat-box {
+      background: var(--surface);
+      padding: 2rem;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .stat-box:hover { background: var(--surface2); }
+    .stat-number {
+      font-family: var(--display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: block;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.5rem;
+      display: block;
+    }
+    .career-timeline {
+      margin-top: 3rem;
+      position: relative;
+      padding-left: 2rem;
+    }
+    .career-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .timeline-item {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.4rem;
+      top: 0.4rem;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .timeline-org {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .timeline-role {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0.25rem 0;
+    }
+    .timeline-period {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+    }
+
+    /* MY WORK */
+    #work { background: var(--bg2); }
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .work-card {
+      background: var(--surface);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .work-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+    }
+    .work-card:hover { background: var(--surface2); }
+    .work-card:hover::before { transform: scaleX(1); }
+    .work-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .work-card h3 {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .work-card p {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .work-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.75rem;
+      letter-spacing: 0.05em;
+      background: var(--accent-glow2);
+    }
+
+    /* SKILLS */
+    #skills { background: var(--bg); }
+    .skills-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    .skill-category h3 {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-item {
+      margin-bottom: 1.25rem;
+    }
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .skill-name {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+    .skill-pct {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+    .skill-bar {
+      height: 3px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      width: 0;
+      transition: width 1.5s ease;
+      position: relative;
+    }
+    .skill-fill::after {
+      content: '';
+      position: absolute;
+      right: 0; top: -2px;
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+    .tool-badge {
+      background: var(--surface);
+      padding: 1.25rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text2);
+      letter-spacing: 0.05em;
+      transition: background 0.2s, color 0.2s;
+      cursor: default;
+    }
+    .tool-badge:hover {
+      background: var(--surface2);
+      color: var(--accent);
+    }
+
+    /* THREAT INTEL */
+    #threat-intel { background: var(--bg2); }
+    .intel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .intel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: none;
+    }
+    .intel-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .intel-severity {
+      padding: 0.4rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sev-critical { background: rgba(255,59,59,0.1); color: var(--red); border-bottom: 1px solid rgba(255,59,59,0.2); }
+    .sev-high { background: rgba(255,107,0,0.1); color: #ff6b00; border-bottom: 1px solid rgba(255,107,0,0.2); }
+    .sev-medium { background: rgba(255,214,0,0.1); color: var(--yellow); border-bottom: 1px solid rgba(255,214,0,0.2); }
+    .sev-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .intel-body { padding: 1.5rem; }
+    .intel-card h3 {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+    .intel-card p {
+      font-size: 0.82rem;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .intel-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text3);
+    }
+    .intel-meta a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .intel-meta a:hover { opacity: 0.7; }
+
+    /* AI IN INFOSEC */
+    #ai-infosec { background: var(--bg); }
+    .ai-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .ai-featured {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      overflow: hidden;
+    }
+    .ai-featured-img {
+      height: 200px;
+      background: linear-gradient(135deg, #0a1628 0%, #001a2e 50%, #000d1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-featured-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,229,255,0.1), transparent 70%);
+    }
+    .ai-featured-content { padding: 2rem; }
+    .ai-featured-content h3 {
+      font-family: var(--display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .ai-featured-content p {
+      color: var(--text2);
+      font-size: 0.875rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .ai-list { display: flex; flex-direction: column; gap: 1rem; }
+    .ai-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: none;
+    }
+    .ai-item:hover { border-color: var(--accent); background: var(--surface2); }
+    .ai-item-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .ai-item h4 { font-family: var(--display); font-size: 0.9rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .ai-item p { font-size: 0.78rem; color: var(--text2); line-height: 1.5; }
+
+    /* BFSI */
+    #bfsi { background: var(--bg2); }
+    .bfsi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    .bfsi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .bfsi-card::after {
+      content: attr(data-num);
+      position: absolute;
+      right: 1.5rem;
+      bottom: -0.5rem;
+      font-family: var(--display);
+      font-size: 5rem;
+      font-weight: 800;
+      color: var(--border);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .bfsi-card:hover { border-color: var(--accent); }
+    .bfsi-card h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .bfsi-card p {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.75;
+    }
+    .bfsi-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--yellow);
+      border: 1px solid rgba(255,214,0,0.3);
+      padding: 0.2rem 0.6rem;
+      margin-bottom: 1rem;
+      background: rgba(255,214,0,0.05);
+    }
+
+    /* THREAT MAP */
+    #threat-map { background: var(--bg); }
+    .map-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      padding: 0;
+      overflow: hidden;
+    }
+    .map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+    .map-title { font-family: var(--mono); font-size: 0.8rem; color: var(--text2); }
+    .map-live { display: flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.7rem; color: var(--red); }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pulse-red 1.5s infinite; }
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,59,59,0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(255,59,59,0); }
+    }
+    .map-iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: block;
+    }
+    .map-placeholder {
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      background: var(--bg2);
+    }
+    .map-placeholder p { font-family: var(--mono); font-size: 0.85rem; color: var(--text2); text-align: center; }
+    .map-placeholder a {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 0.75rem 2rem;
+      transition: background 0.3s;
+    }
+    .map-placeholder a:hover { background: var(--accent-glow); }
+
+    /* NEWSLETTER */
+    #newsletter { background: var(--bg2); }
+    .newsletter-wrapper {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .newsletter-wrapper .section-title { margin-bottom: 1.5rem; }
+    .newsletter-wrapper p {
+      color: var(--text2);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .newsletter-form:focus-within { border-color: var(--accent); }
+    .newsletter-form input {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+      border: none;
+      outline: none;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .newsletter-form input::placeholder { color: var(--text3); }
+    .newsletter-form button {
+      padding: 1rem 2rem;
+      background: var(--accent);
+      border: none;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg);
+      cursor: none;
+      transition: box-shadow 0.3s;
+    }
+    .newsletter-form button:hover { box-shadow: 0 0 20px rgba(0,229,255,0.4); }
+    .newsletter-perks {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 2rem;
+    }
+    .perk {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .perk::before { content: '✓'; color: var(--green); }
+
+    /* RESOURCES */
+    #resources { background: var(--bg); }
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .resource-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: none;
+    }
+    .resource-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+    .resource-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .resource-card h3 {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .resource-card p {
+      font-size: 0.8rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .resource-links {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .resource-link {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .resource-link::before { content: '→'; color: var(--accent); }
+    .resource-link:hover { color: var(--accent); }
+
+    /* CONTACT */
+    #contact { background: var(--bg2); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .contact-info h3 {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .contact-info p {
+      color: var(--text2);
+      font-size: 0.875rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .contact-channels { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-channel {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .contact-channel:hover { border-color: var(--accent); }
+    .channel-icon { font-size: 1.2rem; }
+    .channel-label { font-family: var(--mono); font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+    .channel-value { font-family: var(--mono); font-size: 0.85rem; color: var(--text); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      outline: none;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--text);
+      transition: border-color 0.3s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { height: 130px; }
+    .form-group select { appearance: none; cursor: none; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+    .footer-logo span { color: var(--text3); }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+    }
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* DIVIDER */
+    .hex-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .hex-divider::before, .hex-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .hex-divider span {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text3);
+    }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* MOBILE */
+    @media (max-width: 1024px) {
+      .hero-terminal { display: none; }
+      .about-grid, .ai-layout, .contact-grid { grid-template-columns: 1fr; }
+      .work-grid, .intel-grid { grid-template-columns: 1fr 1fr; }
+      .resources-grid { grid-template-columns: 1fr 1fr; }
+      .bfsi-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 2rem; }
+      section { padding: 4rem 2rem; }
+      footer { padding: 2rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+      hero { padding: 0 2rem; }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .work-grid, .intel-grid, .resources-grid, .tools-grid { grid-template-columns: 1fr; }
+      .skills-container { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Chauhan<span>.</span>Sec</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#threat-intel">Intel</a></li>
+      <li><a href="#ai-infosec">AI</a></li>
+      <li><a href="#bfsi">BFSI</a></li>
+      <li><a href="#resources">Resources</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      Systems Secure
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Information Security Analyst</div>
+      <h1 class="hero-title">
+        Abhishek<br>
+        <span class="accent">Chauhan</span><span class="dim">_</span>
+      </h1>
+      <p class="hero-subtitle">
+        Defending the digital frontier at <span class="highlight">Bajaj Finance</span>.<br>
+        Ex-<span class="highlight">Reliance Jio</span> InfoSec. BFSI Security. AI in CyberSec.
+      </p>
+      <div class="hero-cta">
+        <a href="#work" class="btn-primary">View My Work</a>
+        <a href="#contact" class="btn-secondary">Get In Touch</a>
+      </div>
+    </div>
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <div class="t-dot"></div>
+        <div class="t-dot"></div>
+        <div class="t-dot"></div>
+        <span class="terminal-title">chauhan@sec ~ threat-assessment</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd"> whoami</span></div>
+        <div class="t-output t-accent">abhishek_chauhan [InfoSec Analyst]</div>
+        <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd"> cat specialization.txt</span></div>
+        <div class="t-output">→ BFSI Security Architecture</div>
+        <div class="t-output">→ Threat Intelligence & Analysis</div>
+        <div class="t-output">→ AI-Driven Security Operations</div>
+        <div class="t-output">→ RBI/PCI-DSS Compliance</div>
+        <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd"> sudo check_threat_level</span></div>
+        <div class="t-output t-warn">[!] Active CVEs monitored: 147</div>
+        <div class="t-output t-error">[!!] Critical threats today: 3</div>
+        <div class="t-output t-accent">[✓] All defenses nominal</div>
+        <div class="t-line"><span class="t-prompt">$</span><span class="t-cursor"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header reveal">
+      <div class="section-tag">Identity</div>
+      <h2 class="section-title">About <span class="accent">Me</span></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm <strong>Abhishek Chauhan</strong>, an Information Security Analyst with hands-on experience securing some of India's largest digital ecosystems. My journey in cybersecurity has taken me through the high-velocity threat landscape of <strong>Reliance Jio</strong> to the complex regulatory world of <strong>Bajaj Finance</strong>, one of India's leading NBFCs.</p>
+        <p>My work spans threat detection, incident response, BFSI compliance (RBI guidelines, PCI-DSS), and the rapidly evolving intersection of <strong>artificial intelligence and cybersecurity</strong>. I believe the next wave of both attacks and defenses will be AI-driven — and I'm building expertise at that frontier.</p>
+        <p>Through this blog, I share real-world insights, threat intelligence, and deep analysis that goes beyond the surface — with a special focus on the <strong>banking and financial sector</strong>, where the stakes couldn't be higher.</p>
+        <div class="career-timeline">
+          <div class="timeline-item">
+            <div class="timeline-org">Bajaj Finance Limited</div>
+            <div class="timeline-role">Information Security Analyst</div>
+            <div class="timeline-period">Current Role · NBFC / BFSI</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-org">Reliance Jio Infocomm</div>
+            <div class="timeline-role">InfoSec Analyst</div>
+            <div class="timeline-period">Former Role · Telecom</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-stats reveal">
+        <div class="stat-box">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">Years in InfoSec</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-number">2</span>
+          <span class="stat-label">Enterprise Orgs</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-number">∞</span>
+          <span class="stat-label">Threats Monitored</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Breaches on Watch</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY WORK -->
+  <section id="work">
+    <div class="section-header reveal">
+      <div class="section-tag">Experience</div>
+      <h2 class="section-title">What I <span class="accent">Do</span></h2>
+    </div>
+    <div class="work-grid reveal">
+      <div class="work-card">
+        <span class="work-icon">🛡️</span>
+        <h3>Threat Detection & Response</h3>
+        <p>End-to-end incident lifecycle management — from detection through SIEM platforms to containment, eradication, and post-incident analysis. Built and tuned detection rules for BFSI-specific attack patterns.</p>
+        <div class="work-tags">
+          <span class="tag">SIEM</span>
+          <span class="tag">EDR</span>
+          <span class="tag">SOAR</span>
+          <span class="tag">Splunk</span>
+        </div>
+      </div>
+      <div class="work-card">
+        <span class="work-icon">🏦</span>
+        <h3>BFSI Security Architecture</h3>
+        <p>Designing and implementing security controls aligned with RBI cybersecurity framework, PCI-DSS, and ISO 27001 for India's financial sector. Bridging compliance with real-world threat mitigation.</p>
+        <div class="work-tags">
+          <span class="tag">RBI Framework</span>
+          <span class="tag">PCI-DSS</span>
+          <span class="tag">ISO 27001</span>
+        </div>
+      </div>
+      <div class="work-card">
+        <span class="work-icon">🔍</span>
+        <h3>Vulnerability Assessment</h3>
+        <p>Systematic identification, classification, and prioritization of vulnerabilities across enterprise infrastructure. Application security assessments and penetration testing coordination in production BFSI environments.</p>
+        <div class="work-tags">
+          <span class="tag">VAPT</span>
+          <span class="tag">Nessus</span>
+          <span class="tag">Burp Suite</span>
+        </div>
+      </div>
+      <div class="work-card">
+        <span class="work-icon">🤖</span>
+        <h3>AI-Powered Security Ops</h3>
+        <p>Integrating machine learning models into security operations for anomaly detection, phishing classification, and threat scoring. Exploring LLM-based threat intelligence aggregation and automated reporting.</p>
+        <div class="work-tags">
+          <span class="tag">ML/AI</span>
+          <span class="tag">Anomaly Detection</span>
+          <span class="tag">LLMs</span>
+        </div>
+      </div>
+      <div class="work-card">
+        <span class="work-icon">📡</span>
+        <h3>Threat Intelligence</h3>
+        <p>Operationalizing threat intelligence feeds, tracking APT groups targeting the Indian financial sector, and building contextual threat profiles. MITRE ATT&CK framework mapping and TTP analysis.</p>
+        <div class="work-tags">
+          <span class="tag">MITRE ATT&CK</span>
+          <span class="tag">STIX/TAXII</span>
+          <span class="tag">IOC Analysis</span>
+        </div>
+      </div>
+      <div class="work-card">
+        <span class="work-icon">🔐</span>
+        <h3>Identity & Access Management</h3>
+        <p>Privileged access management, zero-trust architecture implementation, and identity governance across large-scale enterprise environments in telecom and financial services.</p>
+        <div class="work-tags">
+          <span class="tag">Zero Trust</span>
+          <span class="tag">PAM</span>
+          <span class="tag">IAM</span>
+          <span class="tag">MFA</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header reveal">
+      <div class="section-tag">Capabilities</div>
+      <h2 class="section-title">Skills & <span class="accent">Arsenal</span></h2>
+    </div>
+    <div class="skills-container reveal">
+      <div class="skill-category">
+        <h3>// Core Competencies</h3>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Threat Intelligence & Analysis</span><span class="skill-pct">95%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Incident Response</span><span class="skill-pct">90%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">BFSI Compliance (RBI/PCI-DSS)</span><span class="skill-pct">92%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="92"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Vulnerability Assessment & VAPT</span><span class="skill-pct">88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Security Architecture</span><span class="skill-pct">85%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3>// Technical Stack</h3>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">SIEM (Splunk / QRadar)</span><span class="skill-pct">90%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Network Security & Forensics</span><span class="skill-pct">87%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="87"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Cloud Security (AWS / Azure)</span><span class="skill-pct">80%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">AI/ML in Security</span><span class="skill-pct">75%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Python / Security Scripting</span><span class="skill-pct">78%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="78"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tools-grid reveal">
+      <div class="tool-badge">Splunk</div>
+      <div class="tool-badge">QRadar</div>
+      <div class="tool-badge">Nessus</div>
+      <div class="tool-badge">Burp Suite</div>
+      <div class="tool-badge">Wireshark</div>
+      <div class="tool-badge">Metasploit</div>
+      <div class="tool-badge">CrowdStrike</div>
+      <div class="tool-badge">Palo Alto</div>
+      <div class="tool-badge">MITRE ATT&CK</div>
+      <div class="tool-badge">OpenCTI</div>
+      <div class="tool-badge">MISP</div>
+      <div class="tool-badge">Nmap</div>
+      <div class="tool-badge">Cortex XSOAR</div>
+      <div class="tool-badge">Tenable.io</div>
+      <div class="tool-badge">CyberArk</div>
+      <div class="tool-badge">Qualys</div>
+    </div>
+  </section>
+
+  <!-- THREAT INTEL -->
+  <section id="threat-intel">
+    <div class="section-header reveal">
+      <div class="section-tag">Latest Threats</div>
+      <h2 class="section-title">Threat Intel <span class="accent">Feed</span></h2>
+    </div>
+    <div class="intel-grid reveal">
+      <div class="intel-card">
+        <div class="intel-severity sev-critical"><div class="sev-dot"></div>Critical Severity</div>
+        <div class="intel-body">
+          <h3>APT Group Targets Indian BFSI Infrastructure</h3>
+          <p>A sophisticated threat actor has been observed conducting reconnaissance against Indian banking APIs using advanced evasion techniques and living-off-the-land binaries. Multiple FIs issued internal advisories.</p>
+        </div>
+        <div class="intel-meta">
+          <span>Feb 2025 · APT · BFSI</span>
+          <a href="#contact">Read Analysis →</a>
+        </div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-severity sev-high"><div class="sev-dot"></div>High Severity</div>
+        <div class="intel-body">
+          <h3>New Ransomware Variant Exploits Finance Sector VPNs</h3>
+          <p>A newly discovered ransomware family specifically targets legacy VPN appliances common in NBFC environments. Initial access via unpatched CVE-2024-XXXX with lateral movement via compromised service accounts.</p>
+        </div>
+        <div class="intel-meta">
+          <span>Jan 2025 · Ransomware · NBFC</span>
+          <a href="#contact">Read Analysis →</a>
+        </div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-severity sev-medium"><div class="sev-dot"></div>Medium Severity</div>
+        <div class="intel-body">
+          <h3>AI-Generated Phishing Campaigns Evade Traditional Filters</h3>
+          <p>Security researchers have documented a surge in hyper-personalized phishing using LLMs. The campaigns target bank customers and employees with contextually accurate lures that bypass legacy email security tools.</p>
+        </div>
+        <div class="intel-meta">
+          <span>Jan 2025 · Phishing · AI</span>
+          <a href="#contact">Read Analysis →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI IN INFOSEC -->
+  <section id="ai-infosec">
+    <div class="section-header reveal">
+      <div class="section-tag">The New Frontier</div>
+      <h2 class="section-title">AI in <span class="accent">InfoSec</span></h2>
+    </div>
+    <div class="ai-layout reveal">
+      <div class="ai-featured">
+        <div class="ai-featured-img">🧠</div>
+        <div class="ai-featured-content">
+          <h3>The Double-Edged Sword of AI in Cybersecurity</h3>
+          <p>Artificial intelligence is simultaneously the most powerful tool in a defender's arsenal and the most dangerous weapon in an attacker's hands. From AI-powered SOC automation that cuts MTTR from hours to minutes, to LLM-driven phishing campaigns that defeat legacy controls — the AI revolution in security is already here.</p>
+          <p>In this series, I break down both sides: how enterprise security teams are leveraging AI, and how adversaries are weaponizing it against the financial sector.</p>
+          <a href="#contact" class="btn-primary" style="display:inline-block; margin-top: 0.5rem;">Explore Series →</a>
+        </div>
+      </div>
+      <div class="ai-list">
+        <div class="ai-item">
+          <span class="ai-item-icon">🤖</span>
+          <div>
+            <h4>AI-Powered SOC Automation</h4>
+            <p>How ML models are triaging alerts, reducing false positives, and accelerating response in financial sector SOCs.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <span class="ai-item-icon">🎯</span>
+          <div>
+            <h4>LLM-Based Threat Intelligence</h4>
+            <p>Using large language models to aggregate, correlate, and summarize threat intelligence from hundreds of sources in real-time.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <span class="ai-item-icon">🕵️</span>
+          <div>
+            <h4>Adversarial AI & Attack Automation</h4>
+            <p>Documenting how threat actors are using generative AI for reconnaissance, social engineering, and malware development.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <span class="ai-item-icon">📊</span>
+          <div>
+            <h4>Behavioral Anomaly Detection</h4>
+            <p>Deep dive into UEBA (User and Entity Behavior Analytics) using ML in BFSI environments to detect insider threats.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <span class="ai-item-icon">🔮</span>
+          <div>
+            <h4>Predictive Threat Modeling</h4>
+            <p>Building models that predict attack vectors and prioritize vulnerabilities before they're exploited in the wild.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BFSI SECURITY CORNER -->
+  <section id="bfsi">
+    <div class="section-header reveal">
+      <div class="section-tag">Niche Intelligence</div>
+      <h2 class="section-title">BFSI Security <span class="accent">Corner</span></h2>
+    </div>
+    <div class="bfsi-grid reveal">
+      <div class="bfsi-card" data-num="01">
+        <span class="bfsi-badge">RBI COMPLIANCE</span>
+        <h3>Navigating RBI's Cybersecurity Framework for NBFCs</h3>
+        <p>A practitioner's guide to implementing RBI's cybersecurity directions in a non-banking financial company — from governance structure to technical controls and audit readiness.</p>
+      </div>
+      <div class="bfsi-card" data-num="02">
+        <span class="bfsi-badge">FRAUD DETECTION</span>
+        <h3>AI-Driven Fraud Detection in Digital Lending</h3>
+        <p>How ML models are transforming real-time fraud detection in digital lending platforms, reducing fraud losses while maintaining customer experience in high-volume NBFC environments.</p>
+      </div>
+      <div class="bfsi-card" data-num="03">
+        <span class="bfsi-badge">API SECURITY</span>
+        <h3>Securing Open Banking APIs Against Modern Threats</h3>
+        <p>BFSI API attack surface analysis: credential stuffing, account takeover, and business logic abuse — with real-world mitigation strategies drawn from enterprise financial deployments.</p>
+      </div>
+      <div class="bfsi-card" data-num="04">
+        <span class="bfsi-badge">THIRD-PARTY RISK</span>
+        <h3>Third-Party & Vendor Risk in the BFSI Supply Chain</h3>
+        <p>The hidden attack surface: how fintech partnerships and cloud vendors become entry points for attackers. A risk-based framework for managing third-party exposure in regulated environments.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREAT MAP -->
+  <section id="threat-map">
+    <div class="section-header reveal">
+      <div class="section-tag">Live Intelligence</div>
+      <h2 class="section-title">Global Threat <span class="accent">Map</span></h2>
+    </div>
+    <div class="map-container reveal">
+      <div class="map-header">
+        <span class="map-title">// real-time cyberattack visualization — Checkpoint Threat Map</span>
+        <div class="map-live"><div class="live-dot"></div>LIVE</div>
+      </div>
+      <div class="map-placeholder">
+        <p>🌐 Live Threat Map</p>
+        <p style="max-width: 400px;">Click below to open the live global cyberattack map from Check Point Research — updated in real-time with attack origins, targets, and types.</p>
+        <a href="https://threatmap.checkpoint.com/" target="_blank" rel="noopener">Open Live Threat Map ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section id="newsletter">
+    <div class="newsletter-wrapper reveal">
+      <div class="section-tag" style="justify-content: center;">// Weekly Digest</div>
+      <h2 class="section-title">Stay <span class="accent">Informed</span></h2>
+      <p>Get my weekly InfoSec digest delivered straight to your inbox — curated threat intelligence, BFSI security news, AI in security developments, and actionable insights. No spam, no fluff.</p>
+      <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+        <input type="email" placeholder="your@email.com" required />
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="newsletter-perks">
+        <span class="perk">Weekly Threat Digest</span>
+        <span class="perk">BFSI Security Updates</span>
+        <span class="perk">AI Security Insights</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section id="resources">
+    <div class="section-header reveal">
+      <div class="section-tag">Knowledge Base</div>
+      <h2 class="section-title">Resources <span class="accent">Hub</span></h2>
+    </div>
+    <div class="resources-grid reveal">
+      <div class="resource-card">
+        <span class="resource-icon">📋</span>
+        <h3>Frameworks & Standards</h3>
+        <p>Essential security frameworks for BFSI and enterprise environments.</p>
+        <div class="resource-links">
+          <a href="https://attack.mitre.org" target="_blank" class="resource-link">MITRE ATT&CK</a>
+          <a href="https://www.nist.gov/cyberframework" target="_blank" class="resource-link">NIST CSF</a>
+          <a href="https://www.pcisecuritystandards.org" target="_blank" class="resource-link">PCI-DSS</a>
+          <a href="https://www.iso.org/isoiec-27001-information-security.html" target="_blank" class="resource-link">ISO 27001</a>
+        </div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">🇮🇳</span>
+        <h3>RBI & SEBI Guidelines</h3>
+        <p>Regulatory cybersecurity directives for Indian financial institutions.</p>
+        <div class="resource-links">
+          <a href="https://rbi.org.in" target="_blank" class="resource-link">RBI Cybersecurity Framework</a>
+          <a href="https://www.sebi.gov.in" target="_blank" class="resource-link">SEBI Cybersecurity Circular</a>
+          <a href="https://cert-in.org.in" target="_blank" class="resource-link">CERT-In Advisories</a>
+        </div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">🧰</span>
+        <h3>Security Tooling</h3>
+        <p>Open-source and enterprise tools for threat analysis and defense.</p>
+        <div class="resource-links">
+          <a href="https://www.misp-project.org" target="_blank" class="resource-link">MISP Threat Intelligence</a>
+          <a href="https://www.opencti.io" target="_blank" class="resource-link">OpenCTI Platform</a>
+          <a href="https://github.com/DefectDojo/django-DefectDojo" target="_blank" class="resource-link">DefectDojo (VAPT)</a>
+        </div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">📚</span>
+        <h3>Learning Paths</h3>
+        <p>Curated learning resources for aspiring InfoSec professionals.</p>
+        <div class="resource-links">
+          <a href="https://tryhackme.com" target="_blank" class="resource-link">TryHackMe</a>
+          <a href="https://portswigger.net/web-security" target="_blank" class="resource-link">PortSwigger Web Academy</a>
+          <a href="https://www.sans.org" target="_blank" class="resource-link">SANS Institute</a>
+          <a href="https://owasp.org" target="_blank" class="resource-link">OWASP Resources</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <div class="section-tag">Get In Touch</div>
+      <h2 class="section-title">Ask Me / <span class="accent">Consult</span></h2>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <h3>Let's talk security.</h3>
+        <p>Whether you're looking for a security consultation, want to discuss BFSI threat trends, have a question about InfoSec careers, or just want to connect — I'm always open to meaningful conversations in the security space.</p>
+        <div class="contact-channels">
+          <div class="contact-channel">
+            <span class="channel-icon">📧</span>
+            <div>
+              <div class="channel-label">Email</div>
+              <div class="channel-value">abhishek@chauhan.sec</div>
+            </div>
+          </div>
+          <div class="contact-channel">
+            <span class="channel-icon">💼</span>
+            <div>
+              <div class="channel-label">LinkedIn</div>
+              <div class="channel-value">linkedin.com/in/abhishek-chauhan-sec</div>
+            </div>
+          </div>
+          <div class="contact-channel">
+            <span class="channel-icon">🐦</span>
+            <div>
+              <div class="channel-label">Twitter / X</div>
+              <div class="channel-value">@ChauhanSec</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form class="contact-form" onsubmit="handleContact(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" placeholder="Your name" required />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="your@email.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select>
+            <option>Security Consultation</option>
+            <option>BFSI Advisory</option>
+            <option>Collaboration</option>
+            <option>General Inquiry</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Describe your query or project..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Chauhan<span>.</span>Sec</div>
+    <div class="footer-copy">© 2025 Abhishek Chauhan · Information Security Analyst · India</div>
+    <div class="footer-links">
+      <a href="#about">About</a>
+      <a href="#threat-intel">Intel</a>
+      <a href="#newsletter">Newsletter</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    // Custom Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let cx = 0, cy = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      cx = e.clientX; cy = e.clientY;
+      cursor.style.left = cx + 'px';
+      cursor.style.top = cy + 'px';
+    });
+
+    function animateRing() {
+      rx += (cx - rx) * 0.12;
+      ry += (cy - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .work-card, .intel-card, .ai-item, .bfsi-card, .resource-card, .tool-badge').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '50px'; ring.style.height = '50px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px'; cursor.style.height = '12px';
+        ring.style.width = '36px'; ring.style.height = '36px';
+      });
+    });
+
+    // Scroll Reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          // Animate skill bars
+          e.target.querySelectorAll('.skill-fill').forEach(bar => {
+            bar.style.width = bar.dataset.width + '%';
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+
+    // Forms
+    function handleSubscribe(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.textContent = '✓ Subscribed!';
+      btn.style.background = 'var(--green)';
+      setTimeout(() => { btn.textContent = 'Subscribe'; btn.style.background = ''; }, 3000);
+    }
+    function handleContact(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.textContent = '✓ Message Sent!';
+      btn.style.boxShadow = '0 0 20px rgba(0,255,136,0.4)';
+      setTimeout(() => { btn.textContent = 'Send Message'; btn.style.boxShadow = ''; }, 3000);
+    }
+
+    // Active nav highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
